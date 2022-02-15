@@ -2,6 +2,7 @@
 datasets/ttpla/
 datasets/ttpla_dataset/
 datasets/coco/
+training_dir/
 output
 instant_test_output
 inference_test_output

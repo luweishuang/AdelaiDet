@@ -46,7 +46,6 @@ def transform_beziers_annotations(beziers, transforms):
     )
     if do_hflip:
         raise ValueError("Flipping text data is not supported (also disencouraged).")
-
     return beziers
 
 
@@ -64,7 +63,6 @@ def annotations_to_instances(annos, image_size, mask_format="polygon"):
     if "rec" in annos[0]:
         text = [obj.get("rec", []) for obj in annos]
         instance.text = torch.as_tensor(text, dtype=torch.int32)
-
     return instance
 
 

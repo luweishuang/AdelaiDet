@@ -1,4 +1,7 @@
 # output dir
+datasets/ttpla/
+datasets/ttpla_dataset/
+datasets/coco/
 output
 instant_test_output
 inference_test_output

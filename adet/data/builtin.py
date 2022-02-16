@@ -23,8 +23,18 @@ _PREDEFINED_SPLITS_TTPLA = {
 metadata_ttpla = {
     "thing_classes": ["cable", "tower_lattice", "tower_tucohy", "tower_wooden"]
 }
+_PREDEFINED_SPLITS_CABLE = {
+    "cable_train": ("cable/train", "cable/annotations/train.json"),
+    "cable_val": ("cable/val", "cable/annotations/val.json"),
+    "cable_test": ("cable/test", "cable/annotations/test.json"),
+}
+# {'cable': 0}
+metadata_cable = {
+    "thing_classes": ["cable"]
+}
 _all_coco_datasets = {"pic":[_PREDEFINED_SPLITS_PIC, metadata_pic],
-                      "ttpla":[_PREDEFINED_SPLITS_TTPLA, metadata_ttpla]}
+                      "ttpla":[_PREDEFINED_SPLITS_TTPLA, metadata_ttpla],
+                      "cable":[_PREDEFINED_SPLITS_CABLE, metadata_cable]}
 
 _PREDEFINED_SPLITS_TEXT = {
     "totaltext_train": ("totaltext/train_images", "totaltext/train.json"),

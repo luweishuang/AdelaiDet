@@ -3,9 +3,9 @@ import os
 
 output_folder = 'data/splitting_imgs'
 
-train_folder = output_folder+'/'+'train_imgs'
-val_folder = output_folder+'/'+'val_imgs'
-test_folder = output_folder+'/'+'test_imgs'
+train_folder = output_folder+'/'+'train'
+val_folder = output_folder+'/'+'val'
+test_folder = output_folder+'/'+'test'
 
 ap = argparse.ArgumentParser()
 ap.add_argument('-t', '--path_annotation_imgs', default="data/sized_data", help = 'path to jsons annotations')

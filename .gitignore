@@ -1,6 +1,7 @@
 # output dir
 datasets/ttpla/
 datasets/coco/
+datasets/cable/
 datasets/ttpla_preprocess/data
 training_dir/
 output

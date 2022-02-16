@@ -11,10 +11,21 @@ _PREDEFINED_SPLITS_PIC = {
     "pic_person_train": ("pic/image/train", "pic/annotations/train_person.json"),
     "pic_person_val": ("pic/image/val", "pic/annotations/val_person.json"),
 }
-
 metadata_pic = {
     "thing_classes": ["person"]
 }
+
+_PREDEFINED_SPLITS_TTPLA = {
+    "ttpla_train": ("ttpla/train", "ttpla/annotations/train.json"),
+    "ttpla_val": ("ttpla/val", "ttpla/annotations/val.json"),
+    "ttpla_test": ("ttpla/test", "ttpla/annotations/test.json"),
+}
+# {'cable': 0, 'tower_lattice': 1, 'tower_tucohy': 2, 'tower_wooden': 3}
+metadata_ttpla = {
+    "thing_classes": ["cable", "tower_lattice", "tower_tucohy", "tower_wooden"]
+}
+_all_coco_datasets = {"pic":{"data":_PREDEFINED_SPLITS_PIC, "cls":metadata_pic},
+                      "ttpla":{"data":_PREDEFINED_SPLITS_TTPLA, "cls":metadata_ttpla},}
 
 _PREDEFINED_SPLITS_TEXT = {
     "totaltext_train": ("totaltext/train_images", "totaltext/train.json"),
@@ -31,21 +42,30 @@ _PREDEFINED_SPLITS_TEXT = {
     "lsvt_train": ("LSVT/rename_lsvtimg_train", "LSVT/annotations/abcnet_lsvt_train.json"), 
     "chnsyn_train": ("ChnSyn/syn_130k_images", "ChnSyn/annotations/chn_syntext.json"),
 }
-
 metadata_text = {
     "thing_classes": ["text"]
 }
 
 
 def register_all_coco(root="datasets"):
-    for key, (image_root, json_file) in _PREDEFINED_SPLITS_PIC.items():
-        # Assume pre-defined datasets live in `./datasets`.
-        register_coco_instances(
-            key,
-            metadata_pic,
-            os.path.join(root, json_file) if "://" not in json_file else json_file,
-            os.path.join(root, image_root),
-        )
+    # for key, (image_root, json_file) in _PREDEFINED_SPLITS_PIC.items():
+    #     # Assume pre-defined datasets live in `./datasets`.
+    #     register_coco_instances(
+    #         key,
+    #         metadata_pic,
+    #         os.path.join(root, json_file) if "://" not in json_file else json_file,
+    #         os.path.join(root, image_root),
+    #     )
+    for cname, cval in _all_coco_datasets.items():
+        for cdata, ccls in cval.items():
+            for key, (image_root, json_file) in cdata.items():
+                # Assume pre-defined datasets live in `./datasets`.
+                register_coco_instances(
+                    key,
+                    ccls,
+                    os.path.join(root, json_file) if "://" not in json_file else json_file,
+                    os.path.join(root, image_root),
+                )
     for key, (image_root, json_file) in _PREDEFINED_SPLITS_TEXT.items():
         # Assume pre-defined datasets live in `./datasets`.
         register_text_instances(

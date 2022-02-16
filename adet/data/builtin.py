@@ -3,7 +3,7 @@ import os
 from detectron2.data.datasets.register_coco import register_coco_instances
 from detectron2.data.datasets.builtin_meta import _get_builtin_metadata
 
-from .datasets.text import register_text_instances
+# from .datasets.text import register_text_instances
 
 # register plane reconstruction
 
@@ -24,8 +24,8 @@ _PREDEFINED_SPLITS_TTPLA = {
 metadata_ttpla = {
     "thing_classes": ["cable", "tower_lattice", "tower_tucohy", "tower_wooden"]
 }
-_all_coco_datasets = {"pic":{"data":_PREDEFINED_SPLITS_PIC, "cls":metadata_pic},
-                      "ttpla":{"data":_PREDEFINED_SPLITS_TTPLA, "cls":metadata_ttpla},}
+_all_coco_datasets = {"pic":[_PREDEFINED_SPLITS_PIC, metadata_pic],
+                      "ttpla":[_PREDEFINED_SPLITS_TTPLA, metadata_ttpla]}
 
 _PREDEFINED_SPLITS_TEXT = {
     "totaltext_train": ("totaltext/train_images", "totaltext/train.json"),
@@ -57,23 +57,24 @@ def register_all_coco(root="datasets"):
     #         os.path.join(root, image_root),
     #     )
     for cname, cval in _all_coco_datasets.items():
-        for cdata, ccls in cval.items():
-            for key, (image_root, json_file) in cdata.items():
-                # Assume pre-defined datasets live in `./datasets`.
-                register_coco_instances(
-                    key,
-                    ccls,
-                    os.path.join(root, json_file) if "://" not in json_file else json_file,
-                    os.path.join(root, image_root),
-                )
-    for key, (image_root, json_file) in _PREDEFINED_SPLITS_TEXT.items():
-        # Assume pre-defined datasets live in `./datasets`.
-        register_text_instances(
-            key,
-            metadata_text,
-            os.path.join(root, json_file) if "://" not in json_file else json_file,
-            os.path.join(root, image_root),
-        )
+        cdata = cval[0]
+        ccls = cval[1]
+        for key, (image_root, json_file) in cdata.items():
+            # Assume pre-defined datasets live in `./datasets`.
+            register_coco_instances(
+                key,
+                ccls,
+                os.path.join(root, json_file) if "://" not in json_file else json_file,
+                os.path.join(root, image_root),
+            )
+    # for key, (image_root, json_file) in _PREDEFINED_SPLITS_TEXT.items():
+    #     # Assume pre-defined datasets live in `./datasets`.
+    #     register_text_instances(
+    #         key,
+    #         metadata_text,
+    #         os.path.join(root, json_file) if "://" not in json_file else json_file,
+    #         os.path.join(root, image_root),
+    #     )
 
 
 register_all_coco()

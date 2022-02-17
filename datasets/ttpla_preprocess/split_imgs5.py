@@ -8,7 +8,7 @@ val_folder = output_folder+'/'+'val'
 test_folder = output_folder+'/'+'test'
 
 ap = argparse.ArgumentParser()
-ap.add_argument('-t', '--path_annotation_imgs', default="data/sized_data", help = 'path to jsons annotations')
+ap.add_argument('-t', '--path_annotation_imgs', default="data/ttpla_srcdata", help = 'path to jsons annotations')
 args = ap.parse_args()
 
 imgs_names = [js for js in os.listdir(args.path_annotation_imgs) if js.endswith(".jpg")]

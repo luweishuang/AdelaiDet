@@ -2,7 +2,6 @@ import argparse
 import glob
 import os
 import time
-import tqdm
 
 from detectron2.data.detection_utils import read_image
 from detectron2.utils.logger import setup_logger
@@ -12,7 +11,6 @@ from adet.config import get_cfg
 
 
 def setup_cfg(args):
-    # load config from file and command-line arguments
     cfg = get_cfg()
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
@@ -30,18 +28,11 @@ def setup_cfg(args):
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Detectron2 Demo")
-    parser.add_argument(
-        "--config-file",
-        default="configs/SOLOv2/R50_3x_ttpla.yaml",
-        metavar="FILE",
-        help="path to config file",
-    )
-    parser.add_argument("--input", default=["testimgs/ttpla.jpg"], help="A list of space separated input images")
-    parser.add_argument(
-        "--output", default="testimgs/ttpla_preds",
-        help="A file or directory to save output visualizations. If not given, will show output in an OpenCV window.",
-    )
-    parser.add_argument("--model", default="models/ttpla_SOLOv2_R50_3x/model_0059999.pth", help="model to use")
+    parser.add_argument("--input_dir", default="testimgs/ttpla/val")
+    # parser.add_argument("--config-file", default="configs/SOLOv2/R50_3x_ttpla.yaml")
+    # parser.add_argument("--model", default="models/ttpla_SOLOv2_R50_3x/model_0059999.pth", help="model to use")
+    parser.add_argument("--config-file", default="configs/SOLOv2/R50_3x_cable.yaml")
+    parser.add_argument("--model", default="models/cable_SOLOv2_R50_3x/model_0044999.pth", help="model to use")
     parser.add_argument("--device", default="cpu")
     parser.add_argument(
         "--confidence-threshold",
@@ -67,28 +58,19 @@ if __name__ == "__main__":
 
     demo = VisualizationDemo(cfg)
 
-    if os.path.isdir(args.input[0]):
-        args.input = [os.path.join(args.input[0], fname) for fname in os.listdir(args.input[0])]
-    elif len(args.input) == 1:
-        args.input = glob.glob(os.path.expanduser(args.input[0]))
-        assert args.input, "The input path(s) was not found"
-    for path in tqdm.tqdm(args.input, disable=not args.output):
+    imgfiles = sorted(glob.glob(os.path.join(args.input_dir, "*.jpg"), recursive=True))
+    save_dir = args.input_dir + "_cable_preds"
+    os.makedirs(save_dir, exist_ok=True)
+    for cur_imgPath in imgfiles:
         # use PIL, to be consistent with evaluation
-        img = read_image(path, format="BGR")
+        img = read_image(cur_imgPath, format="BGR")
         start_time = time.time()
         predictions, visualized_output = demo.run_on_image(img)
         logger.info(
             "{}: detected {} instances in {:.2f}s".format(
-                path, len(predictions["instances"]), time.time() - start_time
+                cur_imgPath, len(predictions["instances"]), time.time() - start_time
             )
         )
-
-        if args.output:
-            if os.path.isdir(args.output):
-                assert os.path.isdir(args.output), args.output
-                out_filename = os.path.join(args.output, os.path.basename(path))
-            else:
-                assert len(args.input) == 1, "Please specify a directory with args.output"
-                out_filename = args.output
-            visualized_output.save(out_filename)
+        save_path = os.path.join(save_dir, os.path.basename(cur_imgPath))
+        visualized_output.save(save_path)
 

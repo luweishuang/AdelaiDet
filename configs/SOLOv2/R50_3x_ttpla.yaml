@@ -3,6 +3,7 @@ MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   RESNETS:
     DEPTH: 50
+  NUM_CLASSES: 4
 DATASETS:
   TRAIN: ("ttpla_train",)
   TEST: ("ttpla_val",)

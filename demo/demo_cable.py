@@ -1,9 +1,7 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import argparse
 import glob
 import os
 import time
-import cv2
 import tqdm
 
 from detectron2.data.detection_utils import read_image
@@ -12,15 +10,14 @@ from detectron2.utils.logger import setup_logger
 from predictor import VisualizationDemo
 from adet.config import get_cfg
 
-# constants
-WINDOW_NAME = "COCO detections"
-
 
 def setup_cfg(args):
     # load config from file and command-line arguments
     cfg = get_cfg()
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+    cfg.MODEL.WEIGHTS = args.model
+    cfg.MODEL.DEVICE = args.device
     # Set score_threshold for builtin models
     cfg.MODEL.RETINANET.SCORE_THRESH_TEST = args.confidence_threshold
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = args.confidence_threshold
@@ -35,18 +32,17 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Detectron2 Demo")
     parser.add_argument(
         "--config-file",
-        default="configs/quick_schedules/e2e_mask_rcnn_R_50_FPN_inference_acc_test.yaml",
+        default="configs/SOLOv2/R50_3x_ttpla.yaml",
         metavar="FILE",
         help="path to config file",
     )
-    parser.add_argument("--webcam", action="store_true", help="Take inputs from webcam.")
-    parser.add_argument("--video-input", help="Path to video file.")
-    parser.add_argument("--input", nargs="+", help="A list of space separated input images")
+    parser.add_argument("--input", default=["testimgs/ttpla.jpg"], help="A list of space separated input images")
     parser.add_argument(
-        "--output",
-        help="A file or directory to save output visualizations. "
-        "If not given, will show output in an OpenCV window.",
+        "--output", default="testimgs/ttpla_preds",
+        help="A file or directory to save output visualizations. If not given, will show output in an OpenCV window.",
     )
+    parser.add_argument("--model", default="models/ttpla_SOLOv2_R50_3x/model_0059999.pth", help="model to use")
+    parser.add_argument("--device", default="cpu")
     parser.add_argument(
         "--confidence-threshold",
         type=float,
@@ -63,7 +59,6 @@ def get_parser():
 
 
 if __name__ == "__main__":
-    # mp.set_start_method("spawn", force=True)
     args = get_parser().parse_args()
     logger = setup_logger()
     logger.info("Arguments: " + str(args))
@@ -96,7 +91,4 @@ if __name__ == "__main__":
                 assert len(args.input) == 1, "Please specify a directory with args.output"
                 out_filename = args.output
             visualized_output.save(out_filename)
-        else:
-            cv2.imshow(WINDOW_NAME, visualized_output.get_image()[:, :, ::-1])
-            if cv2.waitKey(0) == 27:
-                break  # esc to quit
+

@@ -3,9 +3,10 @@ MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   RESNETS:
     DEPTH: 50
+  NUM_CLASSES: 1
 DATASETS:
   TRAIN: ("cable_train",)
-  TEST: ("ttpla_val",)
+  TEST: ("cable_val",)
 SOLVER:
   STEPS: (210000, 250000)
   MAX_ITER: 270000
